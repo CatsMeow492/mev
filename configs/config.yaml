@@ -1,0 +1,77 @@
+server:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout: "30s"
+  write_timeout: "30s"
+  idle_timeout: "120s"
+
+rpc:
+  base_url: "https://mainnet.base.org"
+  websocket_url: "wss://mainnet.base.org"
+  backup_urls:
+    - "https://base-mainnet.g.alchemy.com/v2/YOUR_API_KEY"
+    - "https://base.blockpi.network/v1/rpc/public"
+  connection_timeout: "30s"
+  reconnect_delay: "1s"
+  max_reconnect_delay: "60s"
+  max_retries: 5
+
+simulation:
+  anvil_path: "anvil"
+  fork_url: "https://mainnet.base.org"
+  max_forks: 10
+  fork_timeout: "30s"
+  simulation_timeout: "5s"
+  cleanup_interval: "60s"
+
+strategies:
+  sandwich:
+    enabled: true
+    min_swap_amount: "10000000000000000000"  # 10 ETH
+    max_slippage: 0.02
+    gas_premium_percent: 0.1
+    min_profit_threshold: "100000000000000000"  # 0.1 ETH
+  
+  backrun:
+    enabled: true
+    min_price_gap: "1000000000000000000"  # 1 ETH
+    max_trade_size: "100000000000000000000"  # 100 ETH
+    min_profit_threshold: "50000000000000000"  # 0.05 ETH
+    supported_pools:
+      - "uniswap_v2"
+      - "uniswap_v3"
+      - "aerodrome"
+  
+  frontrun:
+    enabled: true
+    min_tx_value: "5000000000000000000"  # 5 ETH
+    max_gas_premium: "10000000000000000000"  # 10 ETH
+    min_success_probability: 0.7
+    min_profit_threshold: "100000000000000000"  # 0.1 ETH
+  
+  time_bandit:
+    enabled: false
+    max_bundle_size: 5
+    min_profit_threshold: "200000000000000000"  # 0.2 ETH
+    max_dependency_depth: 3
+
+queue:
+  max_size: 10000
+  max_age: "300s"
+  cleanup_interval: "60s"
+  min_gas_price: "1000000000"  # 1 gwei
+
+monitoring:
+  enabled: true
+  metrics_port: 9090
+  loss_rate_warning: 0.7
+  loss_rate_shutdown: 0.8
+  window_size: 100
+  alert_webhook_url: ""
+  performance_interval: "60s"
+
+database:
+  redis_url: "redis://localhost:6379"
+  postgres_url: "postgres://user:password@localhost/mev_engine?sslmode=disable"
+  max_open_conns: 25
+  max_idle_conns: 5

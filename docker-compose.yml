@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # MEV Engine Application
+  mev-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"  # API server
+      - "9090:9090"  # Metrics server
+    environment:
+      - RPC_BASE_URL=https://mainnet.base.org
+      - RPC_WEBSOCKET_URL=wss://mainnet.base.org
+      - DATABASE_REDIS_URL=redis://redis:6379
+      - DATABASE_POSTGRES_URL=postgres://mev_user:mev_password@postgres:5432/mev_engine?sslmode=disable
+    depends_on:
+      - redis
+      - postgres
+      - anvil
+    volumes:
+      - ./configs:/app/configs:ro
+    restart: unless-stopped
+    networks:
+      - mev-network
+
+  # Redis for caching and session storage
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - mev-network
+
+  # PostgreSQL for persistent data storage
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=mev_engine
+      - POSTGRES_USER=mev_user
+      - POSTGRES_PASSWORD=mev_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+    networks:
+      - mev-network
+
+  # Anvil for local blockchain forking
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    ports:
+      - "8545:8545"
+    command: >
+      anvil
+      --host 0.0.0.0
+      --port 8545
+      --fork-url https://mainnet.base.org
+      --fork-block-number latest
+      --accounts 10
+      --balance 10000
+    restart: unless-stopped
+    networks:
+      - mev-network
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - mev-network
+
+  # Grafana for metrics visualization
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    restart: unless-stopped
+    networks:
+      - mev-network
+
+volumes:
+  redis_data:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  mev-network:
+    driver: bridge
