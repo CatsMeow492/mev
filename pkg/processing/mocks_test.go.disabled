@@ -1,0 +1,137 @@
+package processing
+
+import (
+	"context"
+	"math/big"
+	"time"
+
+	"github.com/mev-engine/l2-mev-strategy-engine/pkg/interfaces"
+	"github.com/mev-engine/l2-mev-strategy-engine/pkg/types"
+)
+
+// MockForkManager implements interfaces.ForkManager for testing
+type MockForkManager struct{}
+
+func (m *MockForkManager) GetAvailableFork(ctx context.Context) (interfaces.Fork, error) {
+	return &MockForPerformanceTest{}, nil
+}
+
+func (m *MockForkManager) ReleaseFork(fork interfaces.Fork) error {
+	return nil
+}
+
+func (m *MockForkManager) GetForkPoolStats() *interfaces.ForkPoolStats {
+	return &interfaces.ForkPoolStats{
+		TotalForks:  5,
+		FailedForks: 0,
+	}
+}
+
+func (m *MockForkManager) CleanupForks() error {
+	return nil
+}
+
+// MockStrategyEngine implements interfaces.StrategyEngine for testing
+type MockStrategyEngine struct{}
+
+func (m *MockStrategyEngine) AnalyzeTransaction(ctx context.Context, tx *types.Transaction, simResult *interfaces.SimulationResult) ([]*interfaces.MEVOpportunity, error) {
+	// Return a mock opportunity for testing
+	return []*interfaces.MEVOpportunity{
+		{
+			ID:             "mock-opportunity",
+			Strategy:       interfaces.StrategySandwich,
+			TargetTx:       tx.Hash,
+			ExpectedProfit: big.NewInt(1000000),
+			GasCost:        big.NewInt(21000),
+			NetProfit:      big.NewInt(979000),
+			Confidence:     0.8,
+			Status:         interfaces.StatusDetected,
+			CreatedAt:      time.Now(),
+		},
+	}, nil
+}
+
+func (m *MockStrategyEngine) DisableStrategy(strategy interfaces.StrategyType) error {
+	return nil
+}
+
+func (m *MockStrategyEngine) EnableStrategy(strategy interfaces.StrategyType) error {
+	return nil
+}
+
+// MockProfitCalculator implements interfaces.ProfitCalculator for testing
+type MockProfitCalculator struct{}
+
+func (m *MockProfitCalculator) CalculateProfit(ctx context.Context, opportunity *interfaces.MEVOpportunity) (*interfaces.ProfitEstimate, error) {
+	return &interfaces.ProfitEstimate{
+		GrossProfit:        big.NewInt(1000000),
+		GasCosts:           big.NewInt(21000),
+		NetProfit:          big.NewInt(979000),
+		Confidence:         0.8,
+		SuccessProbability: 0.9,
+		ProfitMargin:       0.98,
+		RiskScore:          0.2,
+	}, nil
+}
+
+func (m *MockProfitCalculator) CalculateGasCosts(ctx context.Context, txs []*types.Transaction) (*big.Int, error) {
+	return big.NewInt(int64(len(txs) * 21000)), nil
+}
+
+func (m *MockProfitCalculator) CalculateSlippage(ctx context.Context, opportunity *interfaces.MEVOpportunity) (*big.Int, error) {
+	return big.NewInt(1000), nil
+}
+
+func (m *MockProfitCalculator) ValidateProfitability(ctx context.Context, opportunity *interfaces.MEVOpportunity) (bool, error) {
+	return true, nil
+}
+
+// MockSandwichDetector implements interfaces.SandwichDetector for testing
+type MockSandwichDetector struct{}
+
+func (m *MockSandwichDetector) DetectOpportunity(ctx context.Context, tx *types.Transaction, simResult *interfaces.SimulationResult) (*interfaces.SandwichOpportunity, error) {
+	return &interfaces.SandwichOpportunity{
+		TargetTx:       tx,
+		ExpectedProfit: big.NewInt(500000),
+		Pool:           "0x1234",
+		Token0:         "0xETH",
+		Token1:         "0xUSDC",
+	}, nil
+}
+
+// MockBackrunDetector implements interfaces.BackrunDetector for testing
+type MockBackrunDetector struct{}
+
+func (m *MockBackrunDetector) DetectOpportunity(ctx context.Context, tx *types.Transaction, simResult *interfaces.SimulationResult) (*interfaces.BackrunOpportunity, error) {
+	return &interfaces.BackrunOpportunity{
+		TargetTx:       tx,
+		ExpectedProfit: big.NewInt(300000),
+		Pool1:          "0x1234",
+		Pool2:          "0x5678",
+		Token:          "0xETH",
+	}, nil
+}
+
+// MockFrontrunDetector implements interfaces.FrontrunDetector for testing
+type MockFrontrunDetector struct{}
+
+func (m *MockFrontrunDetector) DetectOpportunity(ctx context.Context, tx *types.Transaction, simResult *interfaces.SimulationResult) (*interfaces.FrontrunOpportunity, error) {
+	return &interfaces.FrontrunOpportunity{
+		TargetTx:           tx,
+		ExpectedProfit:     big.NewInt(200000),
+		GasPremium:         big.NewInt(5000),
+		SuccessProbability: 0.8,
+	}, nil
+}
+
+// MockTimeBanditDetector implements interfaces.TimeBanditDetector for testing
+type MockTimeBanditDetector struct{}
+
+func (m *MockTimeBanditDetector) DetectOpportunity(ctx context.Context, txs []*types.Transaction, simResults []*interfaces.SimulationResult) (*interfaces.TimeBanditOpportunity, error) {
+	return &interfaces.TimeBanditOpportunity{
+		OriginalTxs:    txs,
+		OptimalOrder:   txs, // Same order for simplicity
+		ExpectedProfit: big.NewInt(800000),
+		Dependencies:   make(map[string][]string),
+	}, nil
+}
