@@ -49,6 +49,14 @@ type TimeBanditDetector interface {
 	GetConfiguration() *TimeBanditConfig
 }
 
+// CrossLayerArbitrageDetector detects arbitrage opportunities between L1 and L2
+type CrossLayerArbitrageDetector interface {
+	DetectOpportunity(ctx context.Context, bridgeEvent *BridgeEvent, l1Price, l2Price *big.Int) (*CrossLayerOpportunity, error)
+	ComparePrices(ctx context.Context, token string) (*PriceComparison, error)
+	ConstructBridgeTransaction(ctx context.Context, opportunity *CrossLayerOpportunity) (*types.Transaction, error)
+	GetConfiguration() *CrossLayerConfig
+}
+
 // MEVOpportunity represents a detected MEV opportunity
 type MEVOpportunity struct {
 	ID              string
@@ -106,6 +114,28 @@ type TimeBanditOpportunity struct {
 	Dependencies   map[string][]string
 }
 
+// CrossLayerOpportunity represents a cross-layer arbitrage opportunity
+type CrossLayerOpportunity struct {
+	BridgeEvent    *BridgeEvent
+	Token          string
+	L1Price        *big.Int
+	L2Price        *big.Int
+	PriceGap       *big.Int
+	Amount         *big.Int
+	ExpectedProfit *big.Int
+	BridgeTx       *types.Transaction
+	Direction      ArbitrageDirection
+}
+
+// PriceComparison represents price comparison between L1 and L2
+type PriceComparison struct {
+	Token     string
+	L1Price   *big.Int
+	L2Price   *big.Int
+	PriceGap  *big.Int
+	Timestamp time.Time
+}
+
 // Strategy configuration types
 type SandwichConfig struct {
 	MinSwapAmount     *big.Int
@@ -134,14 +164,24 @@ type TimeBanditConfig struct {
 	MaxDependencyDepth int
 }
 
+type CrossLayerConfig struct {
+	MinPriceGap       *big.Int
+	MinAmount         *big.Int
+	MaxAmount         *big.Int
+	BridgeFee         *big.Int
+	MinProfitThreshold *big.Int
+	SupportedTokens   []string
+}
+
 // Enums
 type StrategyType string
 
 const (
-	StrategySandwich  StrategyType = "sandwich"
-	StrategyBackrun   StrategyType = "backrun"
-	StrategyFrontrun  StrategyType = "frontrun"
-	StrategyTimeBandit StrategyType = "time_bandit"
+	StrategySandwich     StrategyType = "sandwich"
+	StrategyBackrun      StrategyType = "backrun"
+	StrategyFrontrun     StrategyType = "frontrun"
+	StrategyTimeBandit   StrategyType = "time_bandit"
+	StrategyCrossLayer   StrategyType = "cross_layer"
 )
 
 type OpportunityStatus string
@@ -153,4 +193,11 @@ const (
 	StatusUnprofitable OpportunityStatus = "unprofitable"
 	StatusExecuted    OpportunityStatus = "executed"
 	StatusFailed      OpportunityStatus = "failed"
+)
+
+type ArbitrageDirection string
+
+const (
+	DirectionL1ToL2 ArbitrageDirection = "l1_to_l2"
+	DirectionL2ToL1 ArbitrageDirection = "l2_to_l1"
 )
