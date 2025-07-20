@@ -86,4 +86,4 @@ node_modules/
 # Python cache (if using any Python tools)
 __pycache__/
 *.py[cod]
-*$py.class
+*$py.class.kiro/
