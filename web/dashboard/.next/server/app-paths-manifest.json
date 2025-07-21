@@ -1,1 +1,12 @@
-{}
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/health-check/route": "app/api/health-check/route.js",
+  "/page": "app/page.js",
+  "/api/health/route": "app/api/health/route.js",
+  "/test/page": "app/test/page.js",
+  "/api/liquidation/route": "app/api/liquidation/route.js",
+  "/api/test/route": "app/api/test/route.js",
+  "/api/cleanup/route": "app/api/cleanup/route.js",
+  "/api/edge/proxy/route": "app/api/edge/proxy/route.js",
+  "/api/edge/websocket/route": "app/api/edge/websocket/route.js"
+}

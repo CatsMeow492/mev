@@ -72,7 +72,7 @@ export const OpportunityList: React.FC<OpportunityListProps> = ({
   };
 
   const profitableCount = opportunities.filter(opp => parseFloat(opp.netProfit) > 0).length;
-  const totalValue = opportunities.reduce((sum, opp) => sum + parseFloat(opp.netProfit) / 1e18, 0);
+      const totalValue = opportunities.reduce((sum, opp) => sum + parseFloat(opp.netProfit), 0); // Backend already sends ETH values
 
   return (
     <div className="space-y-6">
@@ -111,11 +111,12 @@ export const OpportunityList: React.FC<OpportunityListProps> = ({
               className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-sm"
             >
               <option value="all">All Strategies</option>
-              <option value={StrategyType.SANDWICH}>Sandwich</option>
-              <option value={StrategyType.BACKRUN}>Backrun</option>
-              <option value={StrategyType.FRONTRUN}>Frontrun</option>
-              <option value={StrategyType.TIME_BANDIT}>Time Bandit</option>
-              <option value={StrategyType.CROSS_LAYER}>Cross Layer</option>
+                              <option value="sandwich">Sandwich</option>
+                <option value="backrun">Backrun</option>
+                <option value="frontrun">Frontrun</option>
+                <option value="arbitrage">Arbitrage</option>
+                <option value="time_bandit">Time Bandit</option>
+                <option value="cross_layer">Cross Layer</option>
             </select>
           </div>
 
@@ -127,12 +128,14 @@ export const OpportunityList: React.FC<OpportunityListProps> = ({
               className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-sm"
             >
               <option value="all">All Status</option>
-              <option value={OpportunityStatus.PENDING}>Pending</option>
-              <option value={OpportunityStatus.SIMULATED}>Simulated</option>
-              <option value={OpportunityStatus.PROFITABLE}>Profitable</option>
-              <option value={OpportunityStatus.UNPROFITABLE}>Unprofitable</option>
-              <option value={OpportunityStatus.EXECUTED}>Executed</option>
-              <option value={OpportunityStatus.FAILED}>Failed</option>
+                              <option value="pending">Pending</option>
+                <option value="simulated">Simulated</option>
+                <option value="detected">Detected</option>
+                <option value="validated">Validated</option>
+                <option value="profitable">Profitable</option>
+                <option value="unprofitable">Unprofitable</option>
+                <option value="executed">Executed</option>
+                <option value="failed">Failed</option>
             </select>
           </div>
 

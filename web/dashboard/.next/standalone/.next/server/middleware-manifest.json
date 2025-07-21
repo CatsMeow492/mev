@@ -1,0 +1,63 @@
+{
+  "version": 3,
+  "middleware": {},
+  "functions": {
+    "/api/edge/proxy/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/edge-chunks/520.js",
+        "server/app/api/edge/proxy/route.js"
+      ],
+      "name": "app/api/edge/proxy/route",
+      "page": "/api/edge/proxy/route",
+      "matchers": [
+        {
+          "regexp": "^/api/edge/proxy$",
+          "originalSource": "/api/edge/proxy"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "build-1753127900105",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "agsR2zo50KVgi5bsCHomqIuh/VqCltjdqI/ruiDFezo=",
+        "__NEXT_PREVIEW_MODE_ID": "6819634909c055003e428c7f0f1120b6",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "49b9a6efdc3cc6bda2e60464512822b2e827a8135850c542d788186fbf3958aa",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "d48c81880bace9ed2543de02edfbb7d04119367f905e1fdcfa80578491a554a5"
+      }
+    },
+    "/api/edge/websocket/route": {
+      "files": [
+        "server/middleware-build-manifest.js",
+        "server/middleware-react-loadable-manifest.js",
+        "server/next-font-manifest.js",
+        "server/interception-route-rewrite-manifest.js",
+        "server/edge-runtime-webpack.js",
+        "server/edge-chunks/520.js",
+        "server/app/api/edge/websocket/route.js"
+      ],
+      "name": "app/api/edge/websocket/route",
+      "page": "/api/edge/websocket/route",
+      "matchers": [
+        {
+          "regexp": "^/api/edge/websocket$",
+          "originalSource": "/api/edge/websocket"
+        }
+      ],
+      "wasm": [],
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "build-1753127900105",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "agsR2zo50KVgi5bsCHomqIuh/VqCltjdqI/ruiDFezo=",
+        "__NEXT_PREVIEW_MODE_ID": "6819634909c055003e428c7f0f1120b6",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "49b9a6efdc3cc6bda2e60464512822b2e827a8135850c542d788186fbf3958aa",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "d48c81880bace9ed2543de02edfbb7d04119367f905e1fdcfa80578491a554a5"
+      }
+    }
+  },
+  "sortedMiddleware": []
+}

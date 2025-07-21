@@ -5,11 +5,25 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
+    "build:staging": "NODE_ENV=production NEXT_PUBLIC_APP_ENV=staging next build",
+    "build:production": "NODE_ENV=production NEXT_PUBLIC_APP_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:e2e": "playwright test"
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "clean": "rm -rf .next && rm -rf out",
+    "deploy:vercel": "vercel --prod",
+    "deploy:preview": "vercel",
+    "postbuild": "next-sitemap",
+    "analyze": "npm run build:analyze && npx @next/bundle-analyzer .next/server/pages",
+    "performance": "npm run build && npx unlighthouse --site http://localhost:3000"
   },
   "dependencies": {
     "next": "^14.0.0",
@@ -40,6 +54,15 @@
     "jest-environment-jsdom": "^29.7.0",
     "@playwright/test": "^1.40.0",
     "eslint": "^8.55.0",
-    "eslint-config-next": "^14.0.0"
+    "eslint-config-next": "^14.0.0",
+    "@next/bundle-analyzer": "^14.0.0",
+    "webpack-bundle-analyzer": "^4.10.0",
+    "next-sitemap": "^4.2.3",
+    "cross-env": "^7.0.3",
+    "vercel": "^32.5.0",
+    "@types/node": "^20.8.0",
+    "typescript": "^5.2.0",
+    "unlighthouse": "^0.10.0",
+    "lighthouse": "^11.3.0"
   }
 }

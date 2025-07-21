@@ -9,7 +9,8 @@ interface MetricsPanelProps {
 }
 
 const formatETH = (value: string): string => {
-  const num = parseFloat(value) / 1e18;
+  // Backend already sends ETH values, no need to divide by 1e18
+  const num = parseFloat(value);
   return num.toFixed(6);
 };
 

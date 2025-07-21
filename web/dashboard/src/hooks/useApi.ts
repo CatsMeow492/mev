@@ -5,7 +5,7 @@ import axios from 'axios';
 import { MEVOpportunity, PerformanceMetrics, SystemStatus, HistoricalData } from '@/types/mev';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://mev-strategy-dev.fly.dev/api/v1',
   timeout: 10000,
 });
 
