@@ -9,34 +9,40 @@ interface OpportunityCardProps {
 }
 
 const strategyLabels: Record<StrategyType, string> = {
-  [StrategyType.SANDWICH]: 'Sandwich',
-  [StrategyType.BACKRUN]: 'Backrun',
-  [StrategyType.FRONTRUN]: 'Frontrun',
-  [StrategyType.TIME_BANDIT]: 'Time Bandit',
-  [StrategyType.CROSS_LAYER]: 'Cross Layer',
+  'sandwich': 'Sandwich',
+  'backrun': 'Backrun',
+  'frontrun': 'Frontrun',
+  'arbitrage': 'Arbitrage',
+  'time_bandit': 'Time Bandit',
+  'cross_layer': 'Cross Layer',
+  'liquidation': 'Liquidation',
 };
 
 const strategyColors: Record<StrategyType, string> = {
-  [StrategyType.SANDWICH]: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-  [StrategyType.BACKRUN]: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-  [StrategyType.FRONTRUN]: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
-  [StrategyType.TIME_BANDIT]: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-  [StrategyType.CROSS_LAYER]: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  'sandwich': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
+  'backrun': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  'frontrun': 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
+  'arbitrage': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+  'time_bandit': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+  'cross_layer': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+  'liquidation': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
 };
 
 const formatETH = (value: string): string => {
-  const num = parseFloat(value) / 1e18;
+  // Backend already sends ETH values, no need to divide by 1e18
+  const num = parseFloat(value);
   return num.toFixed(6);
 };
 
 const formatGwei = (value: string): string => {
-  const num = parseFloat(value) / 1e9;
+  // Backend already sends ETH values, convert ETH to Gwei for gas display
+  const num = parseFloat(value) * 1e9; // Convert ETH to Gwei
   return num.toFixed(2);
 };
 
 export const OpportunityCard: React.FC<OpportunityCardProps> = ({ opportunity, onClick }) => {
-  const isProfitable = opportunity.status === OpportunityStatus.PROFITABLE;
-  const netProfitETH = parseFloat(opportunity.netProfit) / 1e18;
+  const isProfitable = opportunity.status === 'profitable';
+  const netProfitETH = parseFloat(opportunity.netProfit); // Backend already sends ETH values
 
   return (
     <div

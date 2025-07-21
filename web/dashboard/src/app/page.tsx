@@ -7,9 +7,11 @@ import { MEVOpportunity } from '@/types/mev';
 import { OpportunityList } from '@/components/OpportunityList';
 import { MetricsPanel } from '@/components/MetricsPanel';
 import { SystemStatus } from '@/components/SystemStatus';
+import { ExecutionModePanel } from '@/components/ExecutionModePanel';
+import LiquidationPanel from '@/components/LiquidationPanel';
 
 export default function Dashboard() {
-  const [activeTab, setActiveTab] = useState<'opportunities' | 'metrics' | 'system'>('opportunities');
+  const [activeTab, setActiveTab] = useState<'opportunities' | 'metrics' | 'execution' | 'liquidation' | 'system'>('opportunities');
   const [selectedOpportunity, setSelectedOpportunity] = useState<MEVOpportunity | null>(null);
 
   const {
@@ -21,6 +23,8 @@ export default function Dashboard() {
     error,
     reconnectAttempts,
     acknowledgeAlert,
+    executionMode,
+    sendMessage,
   } = useWebSocket();
 
   const {
@@ -48,6 +52,13 @@ export default function Dashboard() {
     const confirmed = window.confirm('Are you sure you want to restart the system?');
     if (confirmed) {
       await restartSystem();
+    }
+  };
+
+  const handleExecutionModeChange = (newMode: string) => {
+    // Send execution mode change request via WebSocket
+    if (sendMessage) {
+      sendMessage('execution_mode_change', { mode: newMode });
     }
   };
 
@@ -89,6 +100,26 @@ export default function Dashboard() {
                   }`}
                 >
                   Metrics
+                </button>
+                <button
+                  onClick={() => setActiveTab('execution')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    activeTab === 'execution'
+                      ? 'bg-mev-primary text-white'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                  }`}
+                >
+                  🚀 Execution
+                </button>
+                <button
+                  onClick={() => setActiveTab('liquidation')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    activeTab === 'liquidation'
+                      ? 'bg-mev-primary text-white'
+                      : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                  }`}
+                >
+                  💧 Liquidation
                 </button>
                 <button
                   onClick={() => setActiveTab('system')}
@@ -154,6 +185,18 @@ export default function Dashboard() {
           <MetricsPanel metrics={metrics} isLoading={false} />
         )}
 
+        {activeTab === 'execution' && (
+          <ExecutionModePanel
+            executionMode={executionMode}
+            metrics={metrics}
+            onModeChange={handleExecutionModeChange}
+          />
+        )}
+
+        {activeTab === 'liquidation' && (
+          <LiquidationPanel />
+        )}
+
         {activeTab === 'system' && (
           <SystemStatus
             status={systemStatus}
@@ -214,19 +257,19 @@ export default function Dashboard() {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Expected Profit</label>
                     <div className="mt-1 text-mev-primary font-semibold">
-                      {(parseFloat(selectedOpportunity.expectedProfit) / 1e18).toFixed(6)} ETH
+                      {parseFloat(selectedOpportunity.expectedProfit).toFixed(6)} ETH
                     </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Gas Cost</label>
                     <div className="mt-1 text-mev-warning font-semibold">
-                      {(parseFloat(selectedOpportunity.gasCost) / 1e9).toFixed(2)} Gwei
+                      {(parseFloat(selectedOpportunity.gasCost) * 1e9).toFixed(2)} Gwei
                     </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Net Profit</label>
                     <div className={`mt-1 font-semibold ${parseFloat(selectedOpportunity.netProfit) > 0 ? 'text-mev-primary' : 'text-mev-danger'}`}>
-                      {parseFloat(selectedOpportunity.netProfit) > 0 ? '+' : ''}{(parseFloat(selectedOpportunity.netProfit) / 1e18).toFixed(6)} ETH
+                      {parseFloat(selectedOpportunity.netProfit) > 0 ? '+' : ''}{parseFloat(selectedOpportunity.netProfit).toFixed(6)} ETH
                     </div>
                   </div>
                 </div>
@@ -241,7 +284,7 @@ export default function Dashboard() {
                         <div key={index} className="p-3 bg-gray-50 dark:bg-gray-800 rounded">
                           <div className="font-mono text-sm break-all">{tx.hash}</div>
                           <div className="text-xs text-gray-500 mt-1">
-                            Gas: {tx.gasLimit.toLocaleString()} @ {(parseFloat(tx.gasPrice) / 1e9).toFixed(2)} Gwei
+                            Gas: {tx.gasLimit?.toLocaleString() || 'N/A'} @ {tx.gasPrice ? (parseFloat(tx.gasPrice) / 1e9).toFixed(2) : 'N/A'} Gwei
                           </div>
                         </div>
                       ))}
