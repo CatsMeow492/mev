@@ -21,9 +21,9 @@ type timeBanditDetector struct {
 func NewTimeBanditDetector(config *interfaces.TimeBanditConfig) interfaces.TimeBanditDetector {
 	if config == nil {
 		config = &interfaces.TimeBanditConfig{
-			MaxBundleSize:      10,
-			MinProfitThreshold: big.NewInt(50), // $50 minimum profit
-			MaxDependencyDepth: 5,
+			MaxBundleSize:      15,                 // Increased from 10
+			MinProfitThreshold: big.NewInt(10),    // $10 minimum profit (reduced from $50)
+			MaxDependencyDepth: 6,                 // Increased from 5
 		}
 	}
 	return &timeBanditDetector{

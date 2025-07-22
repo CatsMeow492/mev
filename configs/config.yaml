@@ -44,16 +44,16 @@ strategies:
   
   frontrun:
     enabled: true
-    min_tx_value: "5000000000000000000"  # 5 ETH
-    max_gas_premium: "10000000000000000000"  # 10 ETH
-    min_success_probability: 0.7
-    min_profit_threshold: "100000000000000000"  # 0.1 ETH
+    min_tx_value: "1000000000000000000"  # 1 ETH (reduced from 5 ETH)
+    max_gas_premium: "5000000000000000000"  # 5 ETH (reduced from 10 ETH)
+    min_success_probability: 0.5  # 50% (reduced from 70%)
+    min_profit_threshold: "20000000000000000"  # 0.02 ETH (reduced from 0.1 ETH)
   
   time_bandit:
-    enabled: false
-    max_bundle_size: 5
-    min_profit_threshold: "200000000000000000"  # 0.2 ETH
-    max_dependency_depth: 3
+    enabled: true  # ← ENABLED!
+    max_bundle_size: 8  # Increased from 5
+    min_profit_threshold: "30000000000000000"  # 0.03 ETH (reduced from 0.2 ETH)
+    max_dependency_depth: 4  # Increased from 3
 
 queue:
   max_size: 10000

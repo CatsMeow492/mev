@@ -21,10 +21,10 @@ type frontrunDetector struct {
 func NewFrontrunDetector(config *interfaces.FrontrunConfig) interfaces.FrontrunDetector {
 	if config == nil {
 		config = &interfaces.FrontrunConfig{
-			MinTxValue:            big.NewInt(50000),  // $500 minimum transaction value
-			MaxGasPremium:         big.NewInt(500000), // 0.0005 ETH maximum gas premium
-			MinSuccessProbability: 0.7,               // 70% minimum success probability
-			MinProfitThreshold:    big.NewInt(100),   // $100 minimum profit
+			MinTxValue:            big.NewInt(200000),  // $200 minimum transaction value (reduced from $500)
+			MaxGasPremium:         big.NewInt(2000000000000000000), // 2 ETH maximum gas premium (increased from 0.0005 ETH)
+			MinSuccessProbability: 0.4,                // 40% minimum success probability (reduced from 70%)
+			MinProfitThreshold:    big.NewInt(20),     // $20 minimum profit (reduced from $100)
 		}
 	}
 	return &frontrunDetector{

@@ -71,17 +71,17 @@ func (c *Calculator) initializeDefaultThresholds() {
 	}
 
 	c.thresholds[interfaces.StrategyFrontrun] = &ProfitThreshold{
-		MinNetProfit:          big.NewInt(2e16), // 0.02 ETH
-		MinProfitMargin:       0.03,             // 3%
-		MinSuccessProbability: 0.6,              // 60%
-		MaxRiskScore:          0.4,              // 40%
+		MinNetProfit:          big.NewInt(5e15), // 0.005 ETH (reduced from 0.02 ETH)
+		MinProfitMargin:       0.015,            // 1.5% (reduced from 3%)
+		MinSuccessProbability: 0.4,              // 40% (reduced from 60%)
+		MaxRiskScore:          0.5,              // 50% (increased from 40%)
 	}
 
 	c.thresholds[interfaces.StrategyTimeBandit] = &ProfitThreshold{
-		MinNetProfit:          big.NewInt(3e16), // 0.03 ETH
-		MinProfitMargin:       0.025,            // 2.5%
-		MinSuccessProbability: 0.75,             // 75%
-		MaxRiskScore:          0.35,             // 35%
+		MinNetProfit:          big.NewInt(8e15), // 0.008 ETH (reduced from 0.03 ETH)
+		MinProfitMargin:       0.01,             // 1% (reduced from 2.5%)
+		MinSuccessProbability: 0.5,              // 50% (reduced from 75%)
+		MaxRiskScore:          0.45,             // 45% (increased from 35%)
 	}
 }
 
